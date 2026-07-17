@@ -1,0 +1,77 @@
+
+.radix-themes {
+  --color-background: #dae5d6;
+
+  --accent-1: color-mix(in srgb, #b8af53 5%, white);
+  --accent-2: color-mix(in srgb, #b8af53 10%, white);
+  --accent-3: color-mix(in srgb, #b8af53 20%, white);
+  --accent-4: color-mix(in srgb, #b8af53 32%, white);
+  --accent-5: color-mix(in srgb, #b8af53 45%, white);
+  --accent-6: #b8af53;
+  --accent-7: color-mix(in srgb, #59461b 55%, #b8af53);
+  --accent-8: color-mix(in srgb, #59461b 85%, #b8af53);
+  --accent-9: #3d5212;
+  --accent-10: #59461b;
+  --accent-11: color-mix(in srgb, #3d5212 80%, black);
+  --accent-12: #31260c;
+
+  --accent-a2: color-mix(in srgb, #3d5212 8%, transparent);
+  --accent-a3: color-mix(in srgb, #3d5212 16%, transparent);
+  --accent-a4: color-mix(in srgb, #3d5212 24%, transparent);
+  --accent-a5: color-mix(in srgb, #3d5212 34%, transparent);
+  --accent-a6: color-mix(in srgb, #3d5212 45%, transparent);
+  --accent-a7: color-mix(in srgb, #3d5212 58%, transparent);
+  --accent-a8: color-mix(in srgb, #3d5212 72%, transparent);
+  --accent-a9: color-mix(in srgb, #3d5212 85%, transparent);
+  --accent-a11: color-mix(in srgb, #3d5212 92%, transparent);
+
+  --accent-contrast: #ffffff;
+  --accent-surface: color-mix(in srgb, #b8af53 12%, white);
+  --accent-indicator: #3d5212;
+  --accent-track: #3d5212;
+
+  --gray-1: color-mix(in srgb, #31260c 2%, white);
+  --gray-2: color-mix(in srgb, #31260c 4%, white);
+  --gray-3: color-mix(in srgb, #31260c 8%, white);
+  --gray-4: color-mix(in srgb, #31260c 12%, white);
+  --gray-5: color-mix(in srgb, #31260c 18%, white);
+  --gray-6: color-mix(in srgb, #31260c 25%, white);
+  --gray-7: color-mix(in srgb, #31260c 35%, white);
+  --gray-8: color-mix(in srgb, #31260c 50%, white);
+  --gray-9: color-mix(in srgb, #31260c 65%, white);
+  --gray-10: color-mix(in srgb, #31260c 75%, white);
+  --gray-11: color-mix(in srgb, #31260c 85%, white);
+  --gray-12: #31260c;
+}
+
+/*
+  Mapbox GL renders its own canvas straight into the container div, so
+  rounding it needs an actual border-radius + overflow:hidden — no Radix
+  layout prop exposes either on Box. Reuses Radix's own radius scale
+  (set by <Theme radius="..."> in main.tsx) instead of a hardcoded value.
+*/
+.map-frame {
+  border-radius: var(--radius-4);
+  overflow: hidden;
+}
+
+/*
+  Without this, the <Theme> root only grows to its content's height, so
+  --color-background stops short of the viewport and leaves the browser's
+  default white showing below/beside it.
+*/
+html,
+body,
+#root,
+.radix-themes {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+.search-submit-button:hover {
+  background-color: transparent;
+}
+
