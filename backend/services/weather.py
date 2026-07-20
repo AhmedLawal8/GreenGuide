@@ -60,16 +60,19 @@ def get_climate_data(lat, lon):
     annual_mean_temp = average(daily["temperature_2m_mean"])
     annual_max_temp = average(daily["temperature_2m_max"])
     annual_min_temp = average(daily["temperature_2m_min"])
-    annual_precip = sum(
-        value for value in daily["precipitation_sum"]
-        if value is not None
+    annual_precip_mm = sum(
+    value for value in daily["precipitation_sum"]
+    if value is not None
     )
+    years = 30
+
+    average_annual_precip = annual_precip_mm / years
 
     return {
         "annual_mean_temp_f": celsius_to_fahrenheit(annual_mean_temp),
         "annual_max_temp_f": celsius_to_fahrenheit(annual_max_temp),
         "annual_min_temp_f": celsius_to_fahrenheit(annual_min_temp),
-        "annual_precip_inches": mm_to_inches(annual_precip),
+        "annual_precip_inches": mm_to_inches(average_annual_precip),
     }
 
 
