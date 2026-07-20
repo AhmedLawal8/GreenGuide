@@ -1,1 +1,5 @@
+geopandas==1.1.4
+python-dotenv==1.2.2
 requests==2.34.2
+shapely==2.1.2
+
