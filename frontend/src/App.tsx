@@ -1,6 +1,7 @@
 import { BrowserRouter, useRoutes } from "react-router-dom";
 import { routes } from "./router/routes";
 import { RecommendationsProvider } from "./context/RecommendationsContext";
+import { AuthProvider } from "./context/AuthContext";
 
 function AppRoutes() {
   return useRoutes(routes);
@@ -8,10 +9,12 @@ function AppRoutes() {
 
 export function App() {
   return (
-    <RecommendationsProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </RecommendationsProvider>
+    <AuthProvider>
+      <RecommendationsProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </RecommendationsProvider>
+    </AuthProvider>
   );
 }
