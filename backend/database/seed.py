@@ -1,14 +1,7 @@
 """
-migrate.py
-----------
 One-time script. Reads the raw USDA data from plants.db, transforms it,
 and populates greenguide.db through the SQLAlchemy ORM.
 
-Run from the project root:
-    python db/migrate.py
-
-plants.db must be present in the db/ folder before running.
-greenguide.db will be created (or overwritten) in the db/ folder.
 """
 
 import sys
@@ -21,8 +14,9 @@ import requests
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from flask import Flask
-from database.db import db, init_db
-from database.models import Plant
+from database.db import db
+from database.tables import Plant
+from app import create_app
 
 # Hardiness zone lookup - full USDA scale including a/b sub-zones
 ZONE_MAP = [
@@ -93,18 +87,9 @@ def build_soil_texture(coarse, fine, medium):
 
 # Migration
 
-
 DB_DIR  = os.path.dirname(__file__)
 SRC_DB  = os.path.join(DB_DIR, "plants.db")
 DST_DB  = os.path.join(DB_DIR, "greenguide.db")
-
-
-def create_app():
-    app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"]        = f"sqlite:///{DST_DB}"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    init_db(app)
-    return app
 
 
 def fetch_source_rows():
@@ -168,10 +153,16 @@ def clean_scientific_name(name):
     # No tags - strip any trailing author suffix (capitalized word(s) after the species epithet)
     return name.strip()
 
+def clean_common_name(name):
+    if name is None:
+        return None
+    return name.strip().title()
+
 def run_migration():
     app = create_app()
 
     with app.app_context():
+        db.create_all() 
         # Wipe existing data so re-runs are safe
         Plant.query.delete()
         db.session.commit()
@@ -189,7 +180,7 @@ def run_migration():
                 plant = Plant(
                     symbol            = row["symbol"],
                     scientific_name = clean_scientific_name(row["scientific_name"]),
-                    common_name       = row["common_name"],
+                    common_name =       clean_common_name(row["common_name"]),
                     plant_type        = row["growth_habits"],
                     duration          = row["durations"],
                     hardiness_zone    = temp_to_zone(row["temperature_minimum_f"]),

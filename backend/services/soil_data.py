@@ -103,7 +103,7 @@ def get_horizons(cokey):
     return run_query(query)
 
 # Helper used to retrieve the first avaliable information for the soil data given 3 layers fromg get_horizons()
-def first_available(horizons, index):
+def first_available(horizons, index, cast=None):
     """
     Find first non-null value.
     """
@@ -113,7 +113,7 @@ def first_available(horizons, index):
         value = row[index]
 
         if value is not None:
-            return value
+            return cast(value) if cast else value
 
     return None
 
@@ -134,15 +134,15 @@ def get_soil_data(lat, lon):
 
         "drainage": component[2],
 
-        "sand": first_available(horizons, 2),
+        "sand": first_available(horizons, 2, cast=float),
 
-        "clay": first_available(horizons, 3),
+        "clay": first_available(horizons, 3, cast=float),
 
-        "silt": first_available(horizons, 4),
+        "silt": first_available(horizons, 4, cast=float),
 
-        "ph": first_available(horizons, 5),
+        "ph": first_available(horizons, 5, cast=float),
 
-        "organic_matter": first_available(horizons, 6),
+        "organic_matter": first_available(horizons, 6, cast=float),
 
         "layers_checked": len(horizons)
     }

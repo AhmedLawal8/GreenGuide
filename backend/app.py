@@ -1,6 +1,17 @@
+import os
 from flask import Flask
-from database.db import init_db
+from database.db import db
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/greenguide.db"
-init_db(app)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH  = os.path.join(BASE_DIR, "database", "greenguide.db")
+
+def create_app():
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
+    db.init_app(app)
+
+    return app
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True)
