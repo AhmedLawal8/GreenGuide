@@ -38,4 +38,5 @@ def get_hardiness_zone(lat, lon):
     # gridcode is numeric (e.g. 6 = 6a, 7 = 6b), zone is the string
     return match.iloc[0]["zone"].lower()  # e.g "6b"
 
-print(get_hardiness_zone(40.850998, -75.452016))
+if __name__ == "__main__":
+    print(get_hardiness_zone(40.850998, -75.452016))
