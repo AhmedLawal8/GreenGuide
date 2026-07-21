@@ -10,10 +10,13 @@ recommendations_bp = Blueprint("recommendations", __name__)
 @recommendations_bp.get("/api/recommendations")
 def recommend():
     """
-    Query params:
-        lat   (float, required)
-        lon   (float, required)
-        limit (int,   optional, default 20)
+    Params:  lat (float), lon (float), limit (int, default 20, max 40)
+    Returns: { location: { hardiness_zone, soil_name, soil_ph, soil_texture,
+                            drainage, annual_precip_inches, annual_mean_temp_f,
+                            soil_moisture_index },
+               plants:   [ { id, common_name, scientific_name, plant_type,
+                              score, match_reasons, hardiness_zone,
+                              sun_requirement, water_requirement, ... } ] }
     """
 
     # --- parse & validate params ---
@@ -54,6 +57,14 @@ def recommend():
 # POST /api/plants/<id>/explain 
 @recommendations_bp.post("/api/plants/<int:plant_id>/explain")
 def explain(plant_id):
+    """
+    Params:  plant_id (int, URL segment)
+    Body:    { location: { hardiness_zone, soil_name, soil_texture, soil_ph,
+                           drainage, annual_precip_inches, annual_mean_temp_f,
+                           soil_moisture_index },
+               match_reasons: [ str, ... ] }
+    Returns: { plant_id: int, ai_summary: str }
+    """
     plant = Plant.query.get(plant_id)
     if plant is None:
         return jsonify({"error": f"Plant {plant_id} not found"}), 404
