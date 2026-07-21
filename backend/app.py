@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from database.db import db
+from database.tables import User  # noqa: F401 — imported so SQLAlchemy registers the model
 from api.recommender import recommendations_bp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -11,6 +12,9 @@ def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
     db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
 
     CORS(app, resources={r"/api/*": {"origins": os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")}})
 
