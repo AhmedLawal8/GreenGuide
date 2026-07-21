@@ -172,3 +172,121 @@ def login():
 def me(current_user: User):
     """Return the currently authenticated user."""
     return jsonify({"user": current_user.to_dict()}), 200
+
+
+# ---------------------------------------------------------------------------
+# Google OAuth
+# ---------------------------------------------------------------------------
+
+GOOGLE_CLIENT_ID     = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT_URI  = os.environ.get(
+    "GOOGLE_REDIRECT_URI", "http://localhost:5001/api/auth/google/callback"
+)
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
+
+
+@auth_bp.get("/api/auth/google")
+def google_login():
+    """Redirect the browser to Google's OAuth 2.0 consent screen."""
+    if not GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google OAuth is not configured"}), 501
+
+    params = {
+        "client_id":     GOOGLE_CLIENT_ID,
+        "redirect_uri":  GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope":         "openid email profile",
+        "access_type":   "offline",
+        "prompt":        "consent",
+    }
+    qs = "&".join(f"{k}={v}" for k, v in params.items())
+    url = f"https://accounts.google.com/o/oauth2/v2/auth?{qs}"
+
+    from flask import redirect as flask_redirect
+    return flask_redirect(url)
+
+
+@auth_bp.get("/api/auth/google/callback")
+def google_callback():
+    """Exchange the authorization code for user info, then redirect to the frontend with a JWT."""
+    import urllib.request
+    import urllib.parse
+
+    code = request.args.get("code")
+    if not code:
+        return jsonify({"error": "Missing authorization code"}), 400
+
+    # Exchange code for tokens
+    token_data = urllib.parse.urlencode({
+        "code":          code,
+        "client_id":     GOOGLE_CLIENT_ID,
+        "client_secret": GOOGLE_CLIENT_SECRET,
+        "redirect_uri":  GOOGLE_REDIRECT_URI,
+        "grant_type":    "authorization_code",
+    }).encode()
+
+    token_req = urllib.request.Request(
+        "https://oauth2.googleapis.com/token",
+        data=token_data,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+    )
+
+    try:
+        with urllib.request.urlopen(token_req) as resp:
+            token_resp = json.loads(resp.read())
+    except Exception as e:
+        return jsonify({"error": f"Token exchange failed: {e}"}), 502
+
+    access_token = token_resp.get("access_token")
+    if not access_token:
+        return jsonify({"error": "No access token received"}), 502
+
+    # Fetch user info
+    userinfo_req = urllib.request.Request(
+        "https://www.googleapis.com/oauth2/v2/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"},
+    )
+
+    try:
+        with urllib.request.urlopen(userinfo_req) as resp:
+            userinfo = json.loads(resp.read())
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch user info: {e}"}), 502
+
+    google_id    = userinfo.get("id")
+    email        = (userinfo.get("email") or "").lower()
+    display_name = userinfo.get("name", "")
+    avatar_url   = userinfo.get("picture", "")
+
+    if not google_id or not email:
+        return jsonify({"error": "Could not retrieve Google user info"}), 502
+
+    # Find or create user
+    user = User.query.filter_by(google_id=google_id).first()
+
+    if user is None:
+        # Check if a user with this email already exists (registered via password)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # Link Google account to existing user
+            user.google_id    = google_id
+            user.display_name = user.display_name or display_name
+            user.avatar_url   = user.avatar_url or avatar_url
+        else:
+            # Create brand-new user
+            user = User(
+                email=email,
+                google_id=google_id,
+                display_name=display_name,
+                avatar_url=avatar_url,
+            )
+            db.session.add(user)
+
+    db.session.commit()
+
+    jwt_token = create_token(user.id)
+
+    # Redirect to frontend with token in query param
+    from flask import redirect as flask_redirect
+    return flask_redirect(f"{FRONTEND_ORIGIN}/auth/callback?token={jwt_token}")
