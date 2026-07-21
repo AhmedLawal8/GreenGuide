@@ -75,3 +75,47 @@ body {
   background-color: transparent;
 }
 
+.nav-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav-link-row {
+  border-radius: var(--radius-3);
+}
+
+.nav-link:hover .nav-link-row {
+  background-color: var(--accent-a3);
+}
+
+.nav-link-active {
+  background-color: var(--accent-a4);
+}
+
+.text-italic {
+  font-style: italic;
+}
+
+.card-button-reset {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.card-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-3);
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-4);
+}
+
+
