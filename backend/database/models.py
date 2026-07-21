@@ -17,6 +17,7 @@ class Plant(db.Model):
     soil_ph_min       = db.Column(db.Float,   nullable=True)
     soil_ph_max       = db.Column(db.Float,   nullable=True)
     drought_tolerance = db.Column(db.String,  nullable=True,  index=True)  # None | Low | Medium | High
+    image_url         = db.Column(db.String, nullable=True)
 
     def to_dict(self):
         return {
@@ -33,6 +34,7 @@ class Plant(db.Model):
             "soil_ph_min":       self.soil_ph_min,
             "soil_ph_max":       self.soil_ph_max,
             "drought_tolerance": self.drought_tolerance,
+            "image_url": self.image_url,
         }
 
     def __repr__(self):

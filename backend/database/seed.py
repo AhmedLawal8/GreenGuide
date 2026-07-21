@@ -14,6 +14,8 @@ greenguide.db will be created (or overwritten) in the db/ folder.
 import sys
 import os
 import sqlite3
+import time
+import requests
 
 # Allow imports from the project root
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -22,9 +24,7 @@ from flask import Flask
 from database.db import db, init_db
 from database.models import Plant
 
-
 # Hardiness zone lookup - full USDA scale including a/b sub-zones
-
 ZONE_MAP = [
     (-999, -55,  "1a"),
     ( -55, -50,  "1b"),
@@ -123,6 +123,7 @@ def fetch_source_rows():
             p.common_name,
             p.growth_habits,
             p.durations,
+            p.profile_image_url,
             c.temperature_minimum_f,
             c.shade_tolerance,
             c.moisture_use,
@@ -152,6 +153,20 @@ def fetch_source_rows():
     print(f"[info] {len(rows):,} rows fetched from source")
     return rows
 
+import re
+
+def clean_scientific_name(name):
+    """Strip HTML italic tags and author suffixes from scientific names.
+    '<i>Arnica fulgens</i> Pursh' -> 'Arnica fulgens'
+    """
+    if name is None:
+        return None
+    # Extract just the text inside <i>...</i> if present
+    match = re.search(r"<i>(.*?)</i>", name, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    # No tags - strip any trailing author suffix (capitalized word(s) after the species epithet)
+    return name.strip()
 
 def run_migration():
     app = create_app()
@@ -173,7 +188,7 @@ def run_migration():
             try:
                 plant = Plant(
                     symbol            = row["symbol"],
-                    scientific_name   = row["scientific_name"],
+                    scientific_name = clean_scientific_name(row["scientific_name"]),
                     common_name       = row["common_name"],
                     plant_type        = row["growth_habits"],
                     duration          = row["durations"],
@@ -188,6 +203,7 @@ def run_migration():
                     soil_ph_min       = row["ph_minimum"],
                     soil_ph_max       = row["ph_maximum"],
                     drought_tolerance = row["drought_tolerance"],
+                    image_url         = row["profile_image_url"],
                 )
                 batch.append(plant)
                 inserted += 1
