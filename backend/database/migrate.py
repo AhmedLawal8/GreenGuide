@@ -81,11 +81,11 @@ def shade_to_sun(shade_tolerance):
 
 def build_soil_texture(coarse, fine, medium):
     parts = []
-    if coarse:
+    if coarse == "Yes":
         parts.append("coarse")
-    if medium:
+    if medium == "Yes":
         parts.append("medium")
-    if fine:
+    if fine == "Yes":
         parts.append("fine")
     return ", ".join(parts) if parts else None
 
