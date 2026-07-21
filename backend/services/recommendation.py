@@ -1,15 +1,3 @@
-"""
-Core recommendation pipeline for GreenGuide.
-
-Given a latitude and longitude:
-  1. Fetches soil, climate, and hardiness zone data in parallel
-  2. Builds an environmental profile
-  3. Hard-filters the plant database against that profile
-  4. Scores and ranks surviving candidates
-  5. Returns a structured dict matching the /api/recommendations contract
-
-"""
-
 import sys
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed # Used to run api calls in parallel so it'll be faster
@@ -485,5 +473,5 @@ if __name__ == "__main__":
         for plant in result["plants"]:
             print(f"\n  [{plant['score']}] {plant['common_name']} ({plant['scientific_name']})")
             print(f"       Type: {plant['plant_type']}  |  Zone: {plant['hardiness_zone']} | Image : {plant['image_url']}")
-            print(f"       PH_MIN: {plant['soil_ph_min']}  |  PH_MAX: {plant['soil_ph_max']} ")
+            print(f"       PH_MIN: {plant['soil_ph_min']}  |  PH_MAX: {plant['soil_ph_max']} + plant_id {plant["id"]}")
             print(f"       Reasons: {plant['match_reasons']}")

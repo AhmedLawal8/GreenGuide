@@ -3,4 +3,4 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-NOAA_TOKEN = os.getenv("NOAA_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")

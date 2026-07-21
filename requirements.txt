@@ -5,3 +5,4 @@ python-dotenv==1.2.2
 requests==2.34.2
 shapely==2.1.2
 SQLAlchemy==2.0.51
+google-genai==2.10.0
