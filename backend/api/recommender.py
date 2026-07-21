@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy import or_
 from services.recommendation import get_recommendations
 from database.tables import Plant
 from services.ai import get_plant_explanation
@@ -51,7 +52,59 @@ def recommend():
     return jsonify(result), 200
 
 
-# POST /api/plants/<id>/explain 
+# GET /api/plants/search
+@recommendations_bp.get("/api/plants/search")
+def search_plants():
+    """
+    Query params:
+        q     (string, required) - substring matched against common/scientific name
+        limit (int,    optional, default 20)
+    """
+
+    query = (request.args.get("q") or "").strip()
+    if not query:
+        return jsonify({"plants": []}), 200
+
+    try:
+        limit = int(request.args.get("limit", 20))
+        limit = max(1, min(limit, 40))
+    except ValueError:
+        return jsonify({"error": "limit must be an integer"}), 400
+
+    like = f"%{query}%"
+    plants = (
+        Plant.query
+        .filter(or_(Plant.common_name.ilike(like), Plant.scientific_name.ilike(like)))
+        .order_by(Plant.common_name)
+        .limit(limit)
+        .all()
+    )
+
+    plants_payload = [
+        {
+            "id":               plant.id,
+            "common_name":      plant.common_name,
+            "scientific_name":  plant.scientific_name,
+            "plant_type":       plant.plant_type,
+            "image_url":        plant.image_url,
+            "score":            None,
+            "hardiness_zone":   plant.hardiness_zone,
+            "sun_requirement":  plant.sun_requirement,
+            "water_requirement": plant.water_requirement,
+            "drought_tolerance": plant.drought_tolerance,
+            "duration":         plant.duration,
+            "soil_ph_min":      plant.soil_ph_min,
+            "soil_ph_max":      plant.soil_ph_max,
+            "match_reasons":    [],
+            "ai_summary":       None,
+        }
+        for plant in plants
+    ]
+
+    return jsonify({"plants": plants_payload}), 200
+
+
+# POST /api/plants/<id>/explain
 @recommendations_bp.post("/api/plants/<int:plant_id>/explain")
 def explain(plant_id):
     plant = Plant.query.get(plant_id)

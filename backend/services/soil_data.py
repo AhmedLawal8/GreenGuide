@@ -3,20 +3,25 @@ import requests
 # Official USDA API to query for soil data
 BASE_URL = "https://sdmdataaccess.sc.egov.usda.gov/Tabular/post.rest"
 
-# Helper function to run queries 
+
+_soil_cache = {}
+
+# Helper function to run queries
 def run_query(query):
     """Run SQL query against USDA Soil Data Access."""
 
-    response = requests.post(
-        BASE_URL,
-        data={
-            "query": query,
-            "format": "JSON"
-        },
-        timeout=30 
-    )
-
-    response.raise_for_status()
+    try:
+        response = requests.post(
+            BASE_URL,
+            data={
+                "query": query,
+                "format": "JSON"
+            },
+            timeout=30
+        )
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"USDA Soil Data Access request failed: {e}") from e
 
     data = response.json()
 
@@ -120,13 +125,17 @@ def first_available(horizons, index, cast=None):
 
 def get_soil_data(lat, lon):
 
+    cache_key = (round(lat, 2), round(lon, 2))
+    if cache_key in _soil_cache:
+        return _soil_cache[cache_key]
+
     mukey = get_mapunit(lat, lon)
 
     component = get_component(mukey)
 
     horizons = get_horizons(component[0])
 
-    return {
+    result = {
 
         "mukey": mukey,
 
@@ -146,6 +155,9 @@ def get_soil_data(lat, lon):
 
         "layers_checked": len(horizons)
     }
+
+    _soil_cache[cache_key] = result
+    return result
 
 #Test
 if __name__ == "__main__":
