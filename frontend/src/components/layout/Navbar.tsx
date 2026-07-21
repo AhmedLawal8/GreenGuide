@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Flex, Heading, IconButton, Text } from "@radix-ui/themes";
-import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, ListBulletIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { NavLink } from "react-router-dom";
+import { Flex, Heading, IconButton, Text, Avatar, Separator } from "@radix-ui/themes";
+import { ChevronLeftIcon, ChevronRightIcon, HomeIcon, ListBulletIcon, MagnifyingGlassIcon, ExitIcon } from "@radix-ui/react-icons";
+import { NavLink, useNavigate } from "react-router-dom";
 import { LeafIcon } from "../dashboard/LeafIcon";
+import { useAuth } from "../../context/AuthContext";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(true);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
 
   if (!isOpen) {
     return (
@@ -56,6 +64,42 @@ export function Navbar() {
           )}
         </NavLink>
       </Flex>
+
+      {/* Spacer to push user section to the bottom */}
+      <Flex flexGrow="1" />
+
+      {/* User section */}
+      {user && (
+        <>
+          <Separator size="4" />
+          <Flex align="center" gap="2" px="1">
+            <Avatar
+              size="2"
+              radius="full"
+              src={user.avatar_url ?? undefined}
+              fallback={(user.display_name ?? user.username ?? user.email)?.[0]?.toUpperCase() ?? "U"}
+            />
+            <Flex direction="column" flexGrow="1" style={{ minWidth: 0 }}>
+              <Text size="2" weight="medium" truncate>
+                {user.display_name ?? user.username ?? "User"}
+              </Text>
+              <Text size="1" color="gray" truncate>
+                {user.email}
+              </Text>
+            </Flex>
+            <IconButton
+              variant="ghost"
+              color="gray"
+              size="1"
+              onClick={handleLogout}
+              aria-label="Log out"
+              title="Log out"
+            >
+              <ExitIcon />
+            </IconButton>
+          </Flex>
+        </>
+      )}
     </Flex>
   );
 }
