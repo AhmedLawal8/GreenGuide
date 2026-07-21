@@ -11,9 +11,9 @@ type PlantCardProps = {
 
 export function PlantCard({ plant, onEdit, onDelete }: PlantCardProps) {
   return (
-    <Card>
-      <Box mb="3">
-        <AspectRatio ratio={1}>
+    <Card className="plant-card">
+      <Box mb="3" className="plant-card-image-frame plant-card-image-frame--inset">
+        <AspectRatio ratio={16 / 9}>
           <Box position="relative" width="100%" height="100%">
             <Skeleton width="100%" height="100%" />
             <Flex position="absolute" inset="0" align="center" justify="center">
@@ -28,14 +28,14 @@ export function PlantCard({ plant, onEdit, onDelete }: PlantCardProps) {
           <Text as="div" size="3" weight="bold">
             {plant.name}
           </Text>
-          <Text as="div" size="2" color="gray">
+          <Text as="div" size="2" color="gray" className="text-italic">
             {plant.species}
           </Text>
         </Flex>
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <IconButton variant="ghost" color="gray" aria-label={`Actions for ${plant.name}`}>
+            <IconButton variant="soft" color="gray" aria-label={`Actions for ${plant.name}`}>
               <DotsVerticalIcon />
             </IconButton>
           </DropdownMenu.Trigger>
