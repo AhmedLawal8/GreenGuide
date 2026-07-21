@@ -3,10 +3,16 @@ import requests
 BASE_URL = "https://climate-api.open-meteo.com/v1/climate"
 
 
+_climate_cache = {}
+
+
 def run_query(params):
     """Run a request against the Open-Meteo Climate API."""
-    response = requests.get(BASE_URL, params=params, timeout=30)
-    response.raise_for_status()
+    try:
+        response = requests.get(BASE_URL, params=params, timeout=30)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Open-Meteo climate API request failed: {e}") from e
     return response.json()
 
 
@@ -41,6 +47,10 @@ def get_climate_data(lat, lon):
     Return 30-year climate averages for a location.
     """
 
+    cache_key = (round(lat, 2), round(lon, 2))
+    if cache_key in _climate_cache:
+        return _climate_cache[cache_key]
+
     params = {
         "latitude": lat,
         "longitude": lon,
@@ -68,12 +78,14 @@ def get_climate_data(lat, lon):
 
     average_annual_precip = annual_precip_mm / years
 
-    return {
+    result = {
         "annual_mean_temp_f": celsius_to_fahrenheit(annual_mean_temp),
         "annual_max_temp_f": celsius_to_fahrenheit(annual_max_temp),
         "annual_min_temp_f": celsius_to_fahrenheit(annual_min_temp),
         "annual_precip_inches": mm_to_inches(average_annual_precip),
     }
+    _climate_cache[cache_key] = result
+    return result
 
 
 if __name__ == "__main__":

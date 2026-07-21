@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 from database.db import db
 from api.recommender import recommendations_bp
 
@@ -11,9 +12,11 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
     db.init_app(app)
 
+    CORS(app, resources={r"/api/*": {"origins": os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")}})
+
     app.register_blueprint(recommendations_bp)
     return app
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
+    app.run(debug=True, port=int(os.environ.get("PORT", 5001)))
