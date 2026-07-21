@@ -110,6 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setTokenFromCallback = useCallback(async (newToken: string) => {
     localStorage.setItem("gg_token", newToken);
     setToken(newToken);
+    setIsLoading(true);
   }, []);
 
   const logout = useCallback(() => {
