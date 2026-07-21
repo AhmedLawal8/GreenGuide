@@ -19,7 +19,7 @@ export function useMapbox(containerRef: RefObject<HTMLDivElement>) {
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
     });
-    map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    map.addControl(new mapboxgl.NavigationControl(), "bottom-left");
     mapRef.current = map;
 
     return () => {

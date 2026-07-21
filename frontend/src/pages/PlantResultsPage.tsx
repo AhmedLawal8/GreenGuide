@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Badge, Box, Button, Callout, Card, Flex, Grid, Heading, Separator, Skeleton, Text } from "@radix-ui/themes";
 import { ArrowLeftIcon, CheckCircledIcon, InfoCircledIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { SiteConditions } from "../components/plant-results/SiteConditions";
 import { useRecommendations } from "../context/RecommendationsContext";
 import { ApiError, explainPlant } from "../lib/api";
 import { formatListField } from "../lib/format";
@@ -141,6 +142,10 @@ export function PlantResultsPage() {
       </Flex>
 
       <Grid columns={{ initial: "1", md: "2" }} gap="4">
+        <Box gridColumn="1 / -1">
+          <SiteConditions location={plantLocation} />
+        </Box>
+
         <Card>
           <Heading size="4" mb="2">
             Growing Conditions

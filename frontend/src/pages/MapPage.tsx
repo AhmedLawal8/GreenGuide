@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Callout, Flex, Separator } from "@radix-ui/themes";
+import { Box, Callout, Flex } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { MapView } from "../components/map/MapView";
 import { MapControlsPanel } from "../components/controls/MapControlsPanel";
@@ -80,29 +80,30 @@ export function MapPage() {
   }
 
   return (
-    <Box p="6" height="100%">
-      <Flex direction="column" gap="4" height="100%">
-        <MapControlsPanel
-          errorMessage={errorMessage}
-          onLocationResolved={handleLocationResolved}
-          onError={setErrorMessage}
-        />
-        <Flex flexGrow="1" gap="4" minHeight="0">
-          <Box position="relative" flexGrow="1">
+    <Flex direction="column" height="100%" gap="4" p="6">
+      <MapControlsPanel
+        errorMessage={errorMessage}
+        onLocationResolved={handleLocationResolved}
+        onError={setErrorMessage}
+      />
+      <Box position="relative" flexGrow="1" minHeight="0" mr="-6" mb="-6">
+        <Box position="absolute" top="0" left="0" right="0" bottom="0" pr="6" pb="6">
+          <Box position="relative" height="100%">
             <MapView location={location} />
             <Box position="absolute" top="4" left="4">
               <LocationShareControl onLocationResolved={handleLocationResolved} onError={setErrorMessage} />
             </Box>
           </Box>
-          <Separator orientation="vertical" size="4" />
+        </Box>
+        <Box position="absolute" top="0" right="0" height="100%" className="recommendations-overlay">
           <RecommendationsSidebar
             status={recStatus}
             errorMessage={recErrorMessage}
             plants={plants}
             location={locationProfile}
           />
-        </Flex>
-      </Flex>
-    </Box>
+        </Box>
+      </Box>
+    </Flex>
   );
 }

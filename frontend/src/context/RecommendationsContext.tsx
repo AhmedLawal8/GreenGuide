@@ -6,6 +6,8 @@ type RecommendationsContextValue = {
   plants: RecommendedPlant[];
   setRecommendations: (location: LocationProfile, plants: RecommendedPlant[]) => void;
   getPlantById: (id: number) => RecommendedPlant | undefined;
+  savedPlantIds: Set<number>;
+  toggleSavedPlant: (id: number) => void;
 };
 
 const RecommendationsContext = createContext<RecommendationsContextValue | null>(null);
@@ -13,6 +15,7 @@ const RecommendationsContext = createContext<RecommendationsContextValue | null>
 export function RecommendationsProvider({ children }: { children: ReactNode }) {
   const [location, setLocation] = useState<LocationProfile | null>(null);
   const [plants, setPlants] = useState<RecommendedPlant[]>([]);
+  const [savedPlantIds, setSavedPlantIds] = useState<Set<number>>(new Set());
 
   const setRecommendations = useCallback((nextLocation: LocationProfile, nextPlants: RecommendedPlant[]) => {
     setLocation(nextLocation);
@@ -24,9 +27,21 @@ export function RecommendationsProvider({ children }: { children: ReactNode }) {
     [plants],
   );
 
+  const toggleSavedPlant = useCallback((id: number) => {
+    setSavedPlantIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
   const value = useMemo(
-    () => ({ location, plants, setRecommendations, getPlantById }),
-    [location, plants, setRecommendations, getPlantById],
+    () => ({ location, plants, setRecommendations, getPlantById, savedPlantIds, toggleSavedPlant }),
+    [location, plants, setRecommendations, getPlantById, savedPlantIds, toggleSavedPlant],
   );
 
   return (
