@@ -12,7 +12,7 @@ type PlantCardProps = {
 export function PlantCard({ plant, onEdit, onDelete }: PlantCardProps) {
   return (
     <Card>
-      <Box width="75%" mx="auto" mb="3">
+      <Box mb="3">
         <AspectRatio ratio={1}>
           <Box position="relative" width="100%" height="100%">
             <Skeleton width="100%" height="100%" />
