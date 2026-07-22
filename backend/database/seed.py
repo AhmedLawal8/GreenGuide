@@ -117,11 +117,18 @@ def fetch_source_rows():
             c.adapted_to_medium_textured_soils,
             c.ph_minimum,
             c.ph_maximum,
-            c.drought_tolerance
+            c.drought_tolerance,
+            c.growth_rate,
+            c.height_at_20_years_maximum_feet,
+            c.lifespan,
+            c.fertility_requirement,
+            c.bloom_period
         FROM plants p
         JOIN plant_characteristics c ON c.plant_id = p.id
         WHERE p.scientific_name IS NOT NULL
           AND p.scientific_name != ''
+          AND (p.growth_habits IS NULL OR p.growth_habits != '["Graminoid"]')
+          AND (c.commercial_availability IS NULL OR c.commercial_availability = 'Routinely Available')
           AND (
             (c.temperature_minimum_f IS NOT NULL) +
             (c.shade_tolerance IS NOT NULL) +
@@ -195,6 +202,11 @@ def run_migration():
                     soil_ph_max       = row["ph_maximum"],
                     drought_tolerance = row["drought_tolerance"],
                     image_url         = row["profile_image_url"],
+                    growth_rate                     = row["growth_rate"],
+                    height_at_20_years_maximum_feet = row["height_at_20_years_maximum_feet"],
+                    life_span                       = row["lifespan"],
+                    fertility_requirement            = row["fertility_requirement"],
+                    bloom_period                     = row["bloom_period"],
                 )
                 batch.append(plant)
                 inserted += 1

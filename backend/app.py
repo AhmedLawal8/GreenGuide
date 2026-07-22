@@ -7,6 +7,7 @@ from database.db import db
 from database.tables import User  # noqa: F401 — imported so SQLAlchemy registers the model
 from api.recommender import recommendations_bp
 from api.auth import auth_bp
+from api.saved_plants import saved_plants_bp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "database", "greenguide.db")
@@ -24,6 +25,7 @@ def create_app():
 
     app.register_blueprint(recommendations_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(saved_plants_bp)
     return app
 
 if __name__ == "__main__":

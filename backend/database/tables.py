@@ -46,6 +46,12 @@ class Plant(db.Model):
     drought_tolerance = db.Column(db.String,  nullable=True,  index=True)  # None | Low | Medium | High
     image_url         = db.Column(db.String, nullable=True)
 
+    growth_rate                      = db.Column(db.String, nullable=True)
+    height_at_20_years_maximum_feet  = db.Column(db.String, nullable=True)
+    life_span                       = db.Column(db.String, nullable=True)
+    fertility_requirement           = db.Column(db.String, nullable=True)
+    bloom_period                    = db.Column(db.String, nullable=True)
+
     def to_dict(self):
         return {
             "id":                self.id,
@@ -62,7 +68,35 @@ class Plant(db.Model):
             "soil_ph_max":       self.soil_ph_max,
             "drought_tolerance": self.drought_tolerance,
             "image_url": self.image_url,
+            "growth_rate":                     self.growth_rate,
+            "height_at_20_years_maximum_feet":  self.height_at_20_years_maximum_feet,
+            "life_span":                        self.life_span,
+            "fertility_requirement":            self.fertility_requirement,
+            "bloom_period":                     self.bloom_period,
         }
 
     def __repr__(self):
         return f"<Plant {self.symbol} — {self.common_name}>"
+
+
+class SavedPlant(db.Model):
+    __tablename__ = "saved_plants"
+    __table_args__ = (db.UniqueConstraint("user_id", "plant_id", name="uq_saved_plants_user_plant"),)
+
+    id         = db.Column(db.Integer,  primary_key=True, autoincrement=True)
+    user_id    = db.Column(db.Integer,  db.ForeignKey("users.id"),  nullable=False, index=True)
+    plant_id   = db.Column(db.Integer,  db.ForeignKey("plants.id"), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    plant = db.relationship("Plant")
+
+    def to_dict(self):
+        return {
+            "id":         self.id,
+            "plant_id":   self.plant_id,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "plant":      self.plant.to_dict() if self.plant else None,
+        }
+
+    def __repr__(self):
+        return f"<SavedPlant user={self.user_id} plant={self.plant_id}>"

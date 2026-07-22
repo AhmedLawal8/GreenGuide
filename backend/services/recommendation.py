@@ -448,6 +448,11 @@ def get_recommendations(lat, lon, limit=20):
             "duration":         plant.duration,
             "soil_ph_min":      plant.soil_ph_min,
             "soil_ph_max":      plant.soil_ph_max,
+            "growth_rate":                     plant.growth_rate,
+            "height_at_20_years_maximum_feet":  plant.height_at_20_years_maximum_feet,
+            "life_span":                        plant.life_span,
+            "fertility_requirement":            plant.fertility_requirement,
+            "bloom_period":                     plant.bloom_period,
             "match_reasons":    reasons,
             "ai_summary":       None,   # populated lazily by /api/plants/<id>/explain
         })
