@@ -19,7 +19,6 @@ function scoreColor(score: number): "green" | "amber" | "gray" {
 export function RecommendationCard({ plant, onClick, showScore = true }: RecommendationCardProps) {
   const { savedPlantIds, toggleSavedPlant } = useRecommendations();
   const isSaved = savedPlantIds.has(plant.id);
-  const topReason = plant.match_reasons[0];
 
   return (
     <Card asChild className="plant-card">
@@ -69,8 +68,8 @@ export function RecommendationCard({ plant, onClick, showScore = true }: Recomme
           </Flex>
 
           <IconButton
-            variant="soft"
-            color="gray"
+            variant={isSaved ? "solid" : "soft"}
+            color={isSaved ? "green" : "gray"}
             aria-label={isSaved ? "Remove from saved plants" : "Save plant"}
             aria-pressed={isSaved}
             onClick={(event) => {
@@ -78,15 +77,9 @@ export function RecommendationCard({ plant, onClick, showScore = true }: Recomme
               toggleSavedPlant(plant.id);
             }}
           >
-            {isSaved ? <BookmarkFilledIcon color="var(--accent-9)" /> : <BookmarkIcon />}
+            {isSaved ? <BookmarkFilledIcon /> : <BookmarkIcon />}
           </IconButton>
         </Flex>
-
-        {topReason && (
-          <Text as="div" size="1" color="gray" mt="1">
-            {topReason}
-          </Text>
-        )}
       </div>
     </Card>
   );

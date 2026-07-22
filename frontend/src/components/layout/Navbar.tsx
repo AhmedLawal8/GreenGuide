@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Flex, Heading, IconButton, Text, Avatar, Separator } from "@radix-ui/themes";
-import { ChevronRightIcon, HomeIcon, ListBulletIcon, MagnifyingGlassIcon, ExitIcon } from "@radix-ui/react-icons";
+import {
+  ChevronRightIcon,
+  HomeIcon,
+  MagnifyingGlassIcon,
+  BookmarkIcon,
+  ExitIcon,
+} from "@radix-ui/react-icons";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LeafIcon } from "../dashboard/LeafIcon";
 import { useAuth } from "../../context/AuthContext";
@@ -66,21 +72,6 @@ export function Navbar() {
             </Flex>
           )}
         </NavLink>
-        <NavLink to="/dashboard" className="nav-link">
-          {({ isActive }) => (
-            <Flex
-              align="center"
-              gap="2"
-              px="2"
-              py="2"
-              justify={isOpen ? "start" : "center"}
-              className={isActive ? "nav-link-row nav-link-active" : "nav-link-row"}
-            >
-              <ListBulletIcon />
-              {isOpen && <Text size="2" weight={isActive ? "bold" : "regular"}>My Plants</Text>}
-            </Flex>
-          )}
-        </NavLink>
         <NavLink to="/search" className="nav-link">
           {({ isActive }) => (
             <Flex
@@ -93,6 +84,21 @@ export function Navbar() {
             >
               <MagnifyingGlassIcon />
               {isOpen && <Text size="2" weight={isActive ? "bold" : "regular"}>Search</Text>}
+            </Flex>
+          )}
+        </NavLink>
+        <NavLink to="/saved" className="nav-link">
+          {({ isActive }) => (
+            <Flex
+              align="center"
+              gap="2"
+              px="2"
+              py="2"
+              justify={isOpen ? "start" : "center"}
+              className={isActive ? "nav-link-row nav-link-active" : "nav-link-row"}
+            >
+              <BookmarkIcon />
+              {isOpen && <Text size="2" weight={isActive ? "bold" : "regular"}>Saved Plants</Text>}
             </Flex>
           )}
         </NavLink>

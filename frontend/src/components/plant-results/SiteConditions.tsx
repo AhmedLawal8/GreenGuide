@@ -1,7 +1,6 @@
-import type { ReactNode } from "react";
-import { Box, Callout, Card, Flex, Grid, Heading, Separator, Text } from "@radix-ui/themes";
+import { Callout, Card, Flex, Heading, Separator, Text } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { InfoTooltip } from "./InfoTooltip";
+import { StatTile, CategorySection } from "./StatDisplay";
 import { SunIcon } from "./SunIcon";
 import { RaindropIcon } from "./RaindropIcon";
 import type { LocationProfile } from "../../types/recommendation";
@@ -10,49 +9,17 @@ type SiteConditionsProps = {
   location: LocationProfile | null;
 };
 
-type StatTileProps = {
-  icon?: ReactNode;
-  label: string;
-  value: string;
-  tooltip: string;
-};
-
-function StatTile({ icon, label, value, tooltip }: StatTileProps) {
-  return (
-    <Box p="2">
-      <Flex align="center" gap="1" mb="1">
-        {icon && <Text color="var(--accent-9)">{icon}</Text>}
-        <Text size="1" color="gray">
-          {label}
-        </Text>
-        <InfoTooltip label={`What is ${label}?`}>{tooltip}</InfoTooltip>
-      </Flex>
-      <Text size="4" weight="bold">
-        {value}
-      </Text>
-    </Box>
-  );
-}
-
-function CategorySection({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <Box>
-      <Text size="2" weight="medium" color="gray" mb="2" as="div">
-        {title}
-      </Text>
-      <Grid columns={{ initial: "2", sm: "3" }} gap="3">
-        {children}
-      </Grid>
-    </Box>
-  );
-}
-
 export function SiteConditions({ location }: SiteConditionsProps) {
   return (
     <Card>
-      <Heading size="4" mb="2">
-        Site Conditions
-      </Heading>
+      <Flex direction="column" gap="1" mb="2">
+        <Heading size="4">Site Conditions</Heading>
+        {location?.place_label && (
+          <Text size="2" color="gray">
+            {location.place_label}
+          </Text>
+        )}
+      </Flex>
       <Separator size="4" mb="3" />
 
       {!location && (
