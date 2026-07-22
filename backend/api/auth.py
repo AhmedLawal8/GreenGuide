@@ -13,7 +13,7 @@ from database.tables import User
 auth_bp = Blueprint("auth", __name__)
 
 # ---------------------------------------------------------------------------
-# JWT helpers (minimal, no external dependency beyond stdlib)
+# JWT helpers
 # ---------------------------------------------------------------------------
 
 def _b64url_encode(data: bytes) -> str:
@@ -80,7 +80,7 @@ def require_auth(fn):
 
 
 # ---------------------------------------------------------------------------
-# Password hashing (using hashlib — no bcrypt dependency needed)
+# Password hashing (using hashlib)
 # ---------------------------------------------------------------------------
 
 def _hash_password(password: str) -> str:
@@ -287,6 +287,6 @@ def google_callback():
 
     jwt_token = create_token(user.id)
 
-    # Redirect to frontend with token in query param
+    # Redirect to frontend with token
     from flask import redirect as flask_redirect
     return flask_redirect(f"{FRONTEND_ORIGIN}/auth/callback?token={jwt_token}")
