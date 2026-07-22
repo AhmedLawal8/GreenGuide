@@ -60,13 +60,12 @@ def recommend():
 def search_plants():
     """
     Query params:
-        q     (string, required) - substring matched against common/scientific name
+        q     (string, optional) - substring matched against common/scientific name.
+                                    Omitted or blank returns all plants.
         limit (int,    optional, default 20)
     """
 
     query = (request.args.get("q") or "").strip()
-    if not query:
-        return jsonify({"plants": []}), 200
 
     try:
         limit = int(request.args.get("limit", 20))
@@ -74,14 +73,12 @@ def search_plants():
     except ValueError:
         return jsonify({"error": "limit must be an integer"}), 400
 
-    like = f"%{query}%"
-    plants = (
-        Plant.query
-        .filter(or_(Plant.common_name.ilike(like), Plant.scientific_name.ilike(like)))
-        .order_by(Plant.common_name)
-        .limit(limit)
-        .all()
-    )
+    plants_query = Plant.query
+    if query:
+        like = f"%{query}%"
+        plants_query = plants_query.filter(or_(Plant.common_name.ilike(like), Plant.scientific_name.ilike(like)))
+
+    plants = plants_query.order_by(Plant.common_name).limit(limit).all()
 
     plants_payload = [
         {

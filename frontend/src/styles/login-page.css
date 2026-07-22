@@ -1,0 +1,251 @@
+/* ---------------------------------------------------------------
+   Login / Register Page
+   --------------------------------------------------------------- */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--color-background);
+}
+
+/* Card container */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: white;
+  border-radius: var(--radius-4, 24px);
+  border: 1px solid var(--gray-4);
+  padding: 48px 40px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Brand header */
+.login-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.login-brand-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--accent-9);
+}
+
+.login-brand h1 {
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gray-12);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  text-align: center;
+  color: var(--gray-11);
+  font-size: 14px;
+  margin: 0 0 32px;
+}
+
+/* Mode toggle (Login / Register) */
+.login-toggle {
+  display: flex;
+  background: var(--gray-3);
+  border-radius: var(--radius-3, 12px);
+  padding: 4px;
+  margin-bottom: 28px;
+}
+
+.login-toggle button {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-2, 10px);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: var(--gray-11);
+}
+
+.login-toggle button.active {
+  background: white;
+  color: var(--accent-11);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.login-toggle button:not(.active):hover {
+  color: var(--gray-12);
+  background: var(--gray-4);
+}
+
+/* Form fields */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-12);
+}
+
+.login-field input {
+  padding: 12px 16px;
+  border-radius: var(--radius-3, 12px);
+  border: 1px solid var(--gray-6);
+  background: white;
+  color: var(--gray-12);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.login-field input::placeholder {
+  color: var(--gray-9);
+}
+
+.login-field input:focus {
+  border-color: var(--accent-8);
+  box-shadow: 0 0 0 1px var(--accent-8);
+}
+
+/* Submit button */
+.login-submit {
+  margin-top: 8px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--radius-3, 12px);
+  background-color: var(--accent-9);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-submit:hover {
+  background-color: var(--accent-10);
+}
+
+.login-submit:active {
+  transform: translateY(1px);
+}
+
+.login-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Divider */
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--gray-5);
+}
+
+.login-divider span {
+  font-size: 12px;
+  color: var(--gray-10);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+/* Google button */
+.login-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: var(--radius-3, 12px);
+  border: 1px solid var(--gray-6);
+  background: white;
+  color: var(--gray-12);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-google:hover {
+  background: var(--gray-3);
+}
+
+.login-google:active {
+  transform: translateY(1px);
+}
+
+.login-google svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Error message */
+.login-error {
+  padding: 10px 14px;
+  border-radius: var(--radius-2, 10px);
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Loading spinner */
+.login-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: login-spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes login-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .login-card {
+    padding: 36px 24px;
+    border-radius: var(--radius-3, 20px);
+  }
+
+  .login-brand h1 {
+    font-size: 24px;
+  }
+}
+

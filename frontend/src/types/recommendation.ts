@@ -4,6 +4,8 @@ export type LocationProfile = {
   hardiness_zone: string | null;
   annual_precip_inches: number | null;
   annual_mean_temp_f: number | null;
+  annual_min_temp_f: number | null;
+  annual_max_temp_f: number | null;
   soil_name: string | null;
   soil_ph: number | null;
   soil_texture: string | null;

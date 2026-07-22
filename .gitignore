@@ -1,3 +1,16 @@
+# Secrets
 .env
+.env.local
+.env.production
+
+# Python
 .venv
 __pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# Database (local dev)
+*.db
+!backend/database/plants.db

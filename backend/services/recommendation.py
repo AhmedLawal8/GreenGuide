@@ -423,6 +423,8 @@ def get_recommendations(lat, lon, limit=20):
         "hardiness_zone":       profile["hardiness_zone"],
         "annual_precip_inches": profile["annual_precip_inches"],
         "annual_mean_temp_f":   profile["annual_mean_temp_f"],
+        "annual_min_temp_f":    profile["annual_min_temp_f"],
+        "annual_max_temp_f":    profile["annual_max_temp_f"],
         "soil_name":            profile["soil_name"],
         "soil_ph":              profile["soil_ph"],
         "soil_texture":         profile["soil_texture"],

@@ -1,4 +1,31 @@
+from datetime import datetime, timezone
 from database.db import db
+
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    id            = db.Column(db.Integer,  primary_key=True, autoincrement=True)
+    username      = db.Column(db.String,   unique=True, nullable=True, index=True)
+    email         = db.Column(db.String,   unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String,   nullable=True)   # null for Google-only users
+    google_id     = db.Column(db.String,   unique=True, nullable=True, index=True)
+    display_name  = db.Column(db.String,   nullable=True)
+    avatar_url    = db.Column(db.String,   nullable=True)
+    created_at    = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            "id":           self.id,
+            "username":     self.username,
+            "email":        self.email,
+            "display_name": self.display_name,
+            "avatar_url":   self.avatar_url,
+            "created_at":   self.created_at.isoformat() if self.created_at else None,
+        }
+
+    def __repr__(self):
+        return f"<User {self.id} — {self.username or self.email}>"
 
 
 class Plant(db.Model):

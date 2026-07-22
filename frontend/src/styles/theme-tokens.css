@@ -42,6 +42,8 @@
   --gray-10: color-mix(in srgb, #31260c 75%, white);
   --gray-11: color-mix(in srgb, #31260c 85%, white);
   --gray-12: #31260c;
+
+  --recommendations-bg: color-mix(in srgb, #234011 22%, #dae5d6);
 }
 
 /*
@@ -55,11 +57,7 @@
   overflow: hidden;
 }
 
-/*
-  Without this, the <Theme> root only grows to its content's height, so
-  --color-background stops short of the viewport and leaves the browser's
-  default white showing below/beside it.
-*/
+
 html,
 body,
 #root,
@@ -97,18 +95,35 @@ body {
 }
 
 .card-button-reset {
-  all: unset;
-  display: block;
-  width: 100%;
   cursor: pointer;
-  text-align: left;
+  width: 100%;
 }
 
 .card-cover-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: var(--radius-3);
+}
+
+.plant-card-image-frame {
+  margin-left: calc(var(--space-3) * -1);
+  margin-right: calc(var(--space-3) * -1);
+  border-radius: var(--radius-3);
+}
+
+.plant-card-image-frame--inset {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.plant-card {
+  background-color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.plant-card::after {
+  box-shadow: none !important;
 }
 
 .hero-image {
@@ -116,6 +131,37 @@ body {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-4);
+}
+
+.navbar-panel {
+  background-color: var(--color-background);
+}
+
+.logo-toggle-button {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1);
+  border-radius: var(--radius-3);
+}
+
+.logo-toggle-button:hover {
+  background-color: var(--accent-a3);
+}
+
+.recommendations-panel {
+  background-color: var(--recommendations-bg);
+  box-shadow: -10px 0 24px rgba(0, 0, 0, 0.2);
+}
+
+.recommendations-overlay {
+  z-index: 10;
+}
+
+.search-page {
+  background-color: var(--recommendations-bg);
 }
 
 
