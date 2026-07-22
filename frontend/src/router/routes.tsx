@@ -1,8 +1,8 @@
 import type { RouteObject } from "react-router-dom";
 import { MapPage } from "../pages/MapPage";
-import { DashboardPage } from "../pages/DashboardPage";
 import { PlantResultsPage } from "../pages/PlantResultsPage";
 import { SearchPage } from "../pages/SearchPage";
+import { SavedPlantsPage } from "../pages/SavedPlantsPage";
 import { LoginPage } from "../pages/LoginPage";
 import { AuthCallback } from "../pages/AuthCallback";
 import { Layout } from "../components/layout/Layout";
@@ -22,8 +22,8 @@ export const routes: RouteObject[] = [
     ),
     children: [
       { path: "/", element: <MapPage /> },
-      { path: "/dashboard", element: <DashboardPage /> },
       { path: "/search", element: <SearchPage /> },
+      { path: "/saved", element: <SavedPlantsPage /> },
       { path: "/plants/:id", element: <PlantResultsPage /> },
     ],
   },
