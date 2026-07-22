@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { reverseGeocode } from "../lib/geocoding";
 import type { Location } from "../types/location";
 
 export class GeolocationError extends Error {}
@@ -13,10 +14,11 @@ export function useGeolocation() {
 
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          resolve({
-            lng: position.coords.longitude,
-            lat: position.coords.latitude,
-          });
+          const { latitude: lat, longitude: lng } = position.coords;
+          // Label lookup is best-effort — resolve with coordinates either way.
+          reverseGeocode(lat, lng)
+            .then((label) => resolve({ lat, lng, label: label ?? undefined }))
+            .catch(() => resolve({ lat, lng }));
         },
         (error) => {
           switch (error.code) {

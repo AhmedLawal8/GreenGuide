@@ -3,6 +3,7 @@ import type {
   LocationProfile,
   PlantSearchResponse,
   RecommendationsResponse,
+  SavedPlant,
 } from "../types/recommendation";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5001";
@@ -16,11 +17,14 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit, token?: string | null): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       ...init,
     });
   } catch {
@@ -31,6 +35,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const body = await response.json().catch(() => null);
     const message = body?.error ?? "Something went wrong talking to the server.";
     throw new ApiError(message, response.status);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
   }
 
   return response.json() as Promise<T>;
@@ -63,4 +71,16 @@ export async function explainPlant(
     method: "POST",
     body: JSON.stringify({ location, match_reasons: matchReasons }),
   });
+}
+
+export async function getSavedPlants(token: string): Promise<{ plants: SavedPlant[] }> {
+  return request<{ plants: SavedPlant[] }>("/api/saved-plants", undefined, token);
+}
+
+export async function savePlant(plantId: number, token: string): Promise<SavedPlant> {
+  return request<SavedPlant>(`/api/plants/${plantId}/save`, { method: "POST" }, token);
+}
+
+export async function unsavePlant(plantId: number, token: string): Promise<void> {
+  return request<void>(`/api/plants/${plantId}/save`, { method: "DELETE" }, token);
 }
