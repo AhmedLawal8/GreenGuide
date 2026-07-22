@@ -5,6 +5,7 @@ import "@radix-ui/themes/styles.css";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "./styles/theme-tokens.css";
 import "./styles/login-page.css";
+import "./styles/marketing.css";
 import { App } from "./App";
 
 createRoot(document.getElementById("root")!).render(

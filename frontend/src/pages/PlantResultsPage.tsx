@@ -82,8 +82,8 @@ export function PlantResultsPage() {
             We don't have details for this plant. Go back and search a location to see recommendations.
           </Callout.Text>
         </Callout.Root>
-        <Button mt="4" variant="soft" onClick={() => navigate("/")}>
-          <ArrowLeftIcon /> Back to map
+        <Button mt="4" variant="soft" onClick={() => navigate("/explore")}>
+          <ArrowLeftIcon /> Back to Explore
         </Button>
       </Box>
     );

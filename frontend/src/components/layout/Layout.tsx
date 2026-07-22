@@ -1,12 +1,12 @@
 import { Box, Flex } from "@radix-ui/themes";
 import { Outlet } from "react-router-dom";
-import { Navbar } from "./Navbar";
+import { TopNavbar } from "./TopNavbar";
 
 export function Layout() {
   return (
-    <Flex height="100%" width="100%" position="relative">
-      <Navbar />
-      <Box flexGrow="1" height="100%" overflow="hidden">
+    <Flex direction="column" height="100%" width="100%" position="relative">
+      <TopNavbar />
+      <Box flexGrow="1" minHeight="0" overflow="hidden">
         <Outlet />
       </Box>
     </Flex>

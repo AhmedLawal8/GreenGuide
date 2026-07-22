@@ -1,4 +1,5 @@
 import type { RouteObject } from "react-router-dom";
+import { HomePage } from "../pages/HomePage";
 import { MapPage } from "../pages/MapPage";
 import { PlantResultsPage } from "../pages/PlantResultsPage";
 import { SearchPage } from "../pages/SearchPage";
@@ -10,6 +11,7 @@ import { ProtectedRoute } from "../components/auth/ProtectedRoute";
 
 export const routes: RouteObject[] = [
   // Public routes
+  { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/auth/callback", element: <AuthCallback /> },
 
@@ -21,7 +23,7 @@ export const routes: RouteObject[] = [
       </ProtectedRoute>
     ),
     children: [
-      { path: "/", element: <MapPage /> },
+      { path: "/explore", element: <MapPage /> },
       { path: "/search", element: <SearchPage /> },
       { path: "/saved", element: <SavedPlantsPage /> },
       { path: "/plants/:id", element: <PlantResultsPage /> },

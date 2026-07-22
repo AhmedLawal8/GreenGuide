@@ -73,23 +73,6 @@ body {
   background-color: transparent;
 }
 
-.nav-link {
-  text-decoration: none;
-  color: inherit;
-}
-
-.nav-link-row {
-  border-radius: var(--radius-3);
-}
-
-.nav-link:hover .nav-link-row {
-  background-color: var(--accent-a3);
-}
-
-.nav-link-active {
-  background-color: var(--accent-a4);
-}
-
 .text-italic {
   font-style: italic;
 }
@@ -97,6 +80,14 @@ body {
 .card-button-reset {
   cursor: pointer;
   width: 100%;
+}
+
+.card-static {
+  cursor: default;
+}
+
+.score-badge {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
 }
 
 .card-cover-image {
@@ -131,24 +122,6 @@ body {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-4);
-}
-
-.navbar-panel {
-  background-color: var(--color-background);
-}
-
-.logo-toggle-button {
-  all: unset;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-1);
-  border-radius: var(--radius-3);
-}
-
-.logo-toggle-button:hover {
-  background-color: var(--accent-a3);
 }
 
 .recommendations-panel {
