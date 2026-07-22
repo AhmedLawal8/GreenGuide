@@ -62,13 +62,18 @@ def texture_compatible(plant_texture_str, user_texture):
     """
     Check whether the plant's soil_texture field (comma-separated) includes
     the user's classified texture.  If either side is unknown, return True
-    (benefit of the doubt — don't hard-filter on missing data).
+    (benefit of the doubt - don't hard-filter on missing data).
     """
     if not plant_texture_str or not user_texture:
         return True
 
     plant_textures = [t.strip().lower() for t in plant_texture_str.split(",")]
     return user_texture.lower() in plant_textures
+
+
+def format_texture_list(plant_texture_str):
+    """Turn a plant's comma-separated soil_texture field into a readable list."""
+    return ", ".join(t.strip() for t in plant_texture_str.split(","))
 
 # Rough mapping: annual precipitation inches -> water need bucket.
 # Used to check alignment between what a plant needs and what nature provides.
@@ -287,7 +292,7 @@ def score_plant(plant, profile):
     user_precip     = profile["annual_precip_inches"]
     user_zone       = profile["hardiness_zone"]
 
-    # Hardiness zone (25 pts) 
+    # Hardiness zone (25 pts)
     # Already guaranteed plant_zone_rank <= user_zone_rank by hard filter.
     # Award full points if exact zone match, sliding scale for each zone of headroom.
     if plant.hardiness_zone and user_zone_rank is not None:
@@ -296,13 +301,22 @@ def score_plant(plant, profile):
             headroom = user_zone_rank - plant_zone_rank   # 0 = exact match
             if headroom == 0:
                 score += 25
-                reasons.append(f"Perfectly rated for zone {user_zone}")
+                reasons.append(
+                    f"Rated hardy to zone {plant.hardiness_zone}, exactly matching your zone {user_zone} thus "
+                    f"it's built to survive your coldest winter temperatures"
+                )
             elif headroom <= 2:
                 score += 20
-                reasons.append(f"Well suited for zone {user_zone}")
+                reasons.append(
+                    f"Rated hardy to zone {plant.hardiness_zone}, a bit more cold-tolerant than your zone "
+                    f"{user_zone} requires - some cushion against a harsher-than-usual winter"
+                )
             else:
                 score += 15
-                reasons.append(f"Hardy well below zone {user_zone}")
+                reasons.append(
+                    f"Rated hardy to zone {plant.hardiness_zone}, far more cold-tolerant than your zone "
+                    f"{user_zone} requires thus winter cold won't be a limiting factor here"
+                )
     else:
         # No zone data - award partial credit
         score += 12
@@ -324,9 +338,15 @@ def score_plant(plant, profile):
         score   += ph_score
 
         if ph_score >= 16:
-            reasons.append(f"Soil pH {user_ph} is ideal for this plant")
+            reasons.append(
+                f"Your soil pH of {user_ph} sits right in this plant's preferred range of "
+                f"{plant.soil_ph_min}-{plant.soil_ph_max}"
+            )
         elif ph_score >= 10:
-            reasons.append(f"Soil pH {user_ph} is acceptable for this plant")
+            reasons.append(
+                f"Your soil pH of {user_ph} falls within this plant's tolerable range of "
+                f"{plant.soil_ph_min}-{plant.soil_ph_max}, though not at the center of it"
+            )
         # Low pH score means it barely passed the hard filter
 
     elif user_ph is None:
@@ -336,19 +356,23 @@ def score_plant(plant, profile):
     if texture_compatible(plant.soil_texture, user_texture):
         score += 20
         if user_texture and plant.soil_texture:
-            reasons.append(f"Adapted to {user_texture}-textured soils like yours")
+            reasons.append(
+                f"Your soil's {user_texture} texture matches this plant's preferred soil types "
+                f"({format_texture_list(plant.soil_texture)})"
+            )
     # Incompatible texture shouldn't reach here (soft penalise only - not a hard filter)
     else:
         score += 5
 
-    # Water / precipitation match (20 pts) 
+    # Water / precipitation match (20 pts)
     compat = moisture_compatible(plant.water_requirement, user_moisture)
 
     if compat is True:
         score += 20
         if user_precip and plant.water_requirement:
             reasons.append(
-                f"Your soil moisture level ({user_moisture}/100) matches this plant's {plant.water_requirement.lower()} water needs"
+                f"Your site gets about {user_precip}\" of rain a year, keeping soil moisture around "
+                f"{user_moisture}/100 - a good match for this plant's {plant.water_requirement.lower()} water needs"
             )
     elif compat is None:
         score += 10   # neutral: missing data
@@ -361,12 +385,19 @@ def score_plant(plant, profile):
         tol = plant.drought_tolerance.lower()
         if tol == "high":
             score += 15
-            reasons.append("Excellent drought tolerance for your dry site")
+            reasons.append(
+                f"Your site runs dry (soil moisture index {user_moisture}/100) and this plant has high "
+                f"drought tolerance, so it should handle dry spells with little trouble"
+            )
         elif tol == "medium":
             score += 8
-            reasons.append("Moderate drought tolerance suits your conditions")
+            reasons.append(
+                f"Your site runs somewhat dry (soil moisture index {user_moisture}/100); this plant's "
+                f"moderate drought tolerance should hold up reasonably well between rains"
+            )
     elif plant.drought_tolerance and plant.drought_tolerance.lower() == "high":
-        score += 5   # small bonus regardless — resilient plants are good
+        score += 5   # small bonus regardless - resilient plants are good
+        reasons.append("Naturally drought tolerant, adding extra resilience even in a dry year")
 
     return score, reasons
 
